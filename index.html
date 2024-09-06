@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure File Transfer Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        .file-upload {
+            margin-bottom: 20px;
+        }
+        .region-list {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Azure File Transfer Challenge</h1>
+        <div class="file-upload">
+            <input type="file" id="fileInput">
+        </div>
+        <div class="region-list">
+            <h2>Choose Azure Regions</h2>
+            <div id="regions">
+                <!-- Regions will be dynamically added here -->
+            </div>
+            <button onclick="startTransfer()">Start Transfer</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // List of Azure regions (simplified)
+        const azureRegions = ["East US", "West Europe", "Southeast Asia", "Australia East", "Japan East"];
+        const regionsDiv = document.getElementById('regions');
+
+        // Dynamically display regions
+        azureRegions.forEach((region, index) => {
+            let div = document.createElement('div');
+            div.innerHTML = `<input type="checkbox" id="region-${index}" value="${region}"> ${region}`;
+            regionsDiv.appendChild(div);
+        });
+
+        // Function to start the file transfer
+        function startTransfer() {
+            const file = document.getElementById('fileInput').files[0];
+            if (!file) {
+                alert('Please select a file.');
+                return;
+            }
+
+            // Get selected regions
+            const selectedRegions = [];
+            azureRegions.forEach((region, index) => {
+                if (document.getElementById(`region-${index}`).checked) {
+                    selectedRegions.push(region);
+                }
+            });
+
+            if (selectedRegions.length === 0) {
+                alert('Please select at least one region.');
+                return;
+            }
+
+            // Send file to the backend (Azure Functions) and process the regions
+            alert(`Starting file transfer to: ${selectedRegions.join(', ')}`);
+            document.getElementById('result').innerHTML = 'File transfer in progress...';
+
+            // Here you would use fetch to send the file and selected regions to Azure Functions
+        }
+    </script>
+</body>
+</html>
