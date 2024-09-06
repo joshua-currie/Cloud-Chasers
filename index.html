@@ -78,6 +78,11 @@
             formData.append('file', file);
             formData.append('regions', JSON.stringify(selectedRegions));
 
+            // Log FormData for debugging
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
+
             try {
                 // Make an HTTP POST request to your Azure Function
                 const response = await fetch('https://cloud-chasers-function-app.azurewebsites.net/api/HttpTrigger1?code=_XiazNVpJOCnCkPytVOfp5tEKiNvi4l3BzSqaS3eN9RSAzFuDqBKKQ%3D%3D', {
@@ -97,7 +102,11 @@
                 }
             } catch (error) {
                 console.error('Error transferring file:', error);
-                document.getElementById('result').innerHTML = 'An error occurred during the transfer.';
+                document.getElementById('result').innerHTML = `
+                    An error occurred during the transfer.<br>
+                    Error message: ${error.message || error}<br>
+                    Please check the console for more details.
+                `;
             }
         }
     </script>
