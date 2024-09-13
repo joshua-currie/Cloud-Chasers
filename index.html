@@ -19,8 +19,46 @@
         .file-upload {
             margin-bottom: 20px;
         }
-        .region-list {
+        .region-list, .selected-list {
             margin-top: 20px;
+        }
+        .region-buttons {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .region-buttons button {
+            margin: 5px;
+            padding: 10px;
+            background-color: #0078D4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .region-buttons button.deselected {
+            background-color: #ccc;
+            color: #666;
+        }
+        .region-buttons button:hover {
+            background-color: #005A9E;
+        }
+        .selected-regions {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .selected-regions h2 {
+            margin-top: 0;
+        }
+        .selected-regions ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .selected-regions li {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -30,27 +68,87 @@
         <div class="file-upload">
             <input type="file" id="fileInput">
         </div>
+        
         <div class="region-list">
-            <h2>Choose Azure Regions</h2>
-            <div id="regions">
-                <!-- Regions will be dynamically added here -->
+            <h2>Select Azure Regions</h2>
+            <div class="region-buttons" id="regions">
+                <!-- Region buttons will be dynamically added here -->
             </div>
-            <button onclick="startTransfer()">Start Transfer</button>
         </div>
+        
+        <div class="selected-list">
+            <div class="selected-regions">
+                <h2>Selected Regions (In Order)</h2>
+                <ul id="selectedRegions">
+                    <!-- Selected regions will be displayed here -->
+                </ul>
+            </div>
+        </div>
+
+        <button onclick="startTransfer()">Start Transfer</button>
+        
         <div id="result"></div>
     </div>
 
     <script>
-        // List of Azure regions (simplified)
-        const azureRegions = ["East US", "West Europe", "Southeast Asia", "Australia East", "Japan East"];
-        const regionsDiv = document.getElementById('regions');
+        // List of Azure regions with descriptions
+        const azureRegions = [
+            "East US - Virginia", "East US 2 - Virginia", "Central US - Iowa", 
+            "North Central US - Illinois", "South Central US - Texas", "West US - California",
+            "West US 2 - Washington", "West US 3 - Arizona", "Canada Central - Toronto, Ontario", 
+            "Canada East - Quebec City, Quebec", "Brazil South - Sao Paulo State", "Brazil Southeast - Rio de Janeiro", 
+            "North Europe - Ireland", "West Europe - Netherlands", "France Central - Paris", 
+            "France South - Marseille", "UK South - London", "UK West - Cardiff", 
+            "Germany North - Berlin", "Germany West Central - Frankfurt", "Norway East - Oslo", 
+            "Norway West - Stavanger", "Switzerland North - Zurich", "Switzerland West - Geneva", 
+            "UAE North - Dubai", "UAE Central - Abu Dhabi", "South Africa North - Johannesburg", 
+            "South Africa West - Cape Town", "Australia East - New South Wales", "Australia Southeast - Victoria", 
+            "Australia Central - Canberra", "Japan East - Tokyo", "Japan West - Osaka", 
+            "Korea Central - Seoul", "Korea South - Busan", "India Central - Pune", 
+            "India South - Chennai", "India West - Mumbai", "China East - Shanghai", "China North - Beijing"
+        ];
 
-        // Dynamically display regions
+        const regionsDiv = document.getElementById('regions');
+        const selectedRegionsUl = document.getElementById('selectedRegions');
+        let selectedRegions = [];
+
+        // Dynamically display region buttons
         azureRegions.forEach((region, index) => {
-            let div = document.createElement('div');
-            div.innerHTML = `<input type="checkbox" id="region-${index}" value="${region}"> ${region}`;
-            regionsDiv.appendChild(div);
+            let button = document.createElement('button');
+            button.innerText = region;
+            button.setAttribute('id', `region-${index}`);
+            button.onclick = function() {
+                toggleRegion(region, button);
+            };
+            regionsDiv.appendChild(button);
         });
+
+        // Function to toggle region selection
+        function toggleRegion(region, button) {
+            const regionIndex = selectedRegions.indexOf(region);
+            if (regionIndex === -1) {
+                // Add region to the selected regions if not already selected
+                selectedRegions.push(region);
+                button.classList.add('deselected'); // Visually disable the button
+            } else {
+                // Remove region if it's already selected
+                selectedRegions.splice(regionIndex, 1);
+                button.classList.remove('deselected'); // Re-enable the button
+            }
+
+            // Update the display
+            updateSelectedRegions();
+        }
+
+        // Function to update the selected regions display with order numbers
+        function updateSelectedRegions() {
+            selectedRegionsUl.innerHTML = ""; // Clear current list
+            selectedRegions.forEach((region, index) => {
+                let li = document.createElement('li');
+                li.innerText = `${index + 1}. ${region}`; // Display order number
+                selectedRegionsUl.appendChild(li);
+            });
+        }
 
         // Function to start the file transfer
         async function startTransfer() {
@@ -59,14 +157,6 @@
                 alert('Please select a file.');
                 return;
             }
-
-            // Get selected regions
-            const selectedRegions = [];
-            azureRegions.forEach((region, index) => {
-                if (document.getElementById(`region-${index}`).checked) {
-                    selectedRegions.push(region);
-                }
-            });
 
             if (selectedRegions.length === 0) {
                 alert('Please select at least one region.');
@@ -117,7 +207,6 @@
 
             reader.readAsDataURL(file); // Trigger the file reading process
         }
-
     </script>
 </body>
 </html>
