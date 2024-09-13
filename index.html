@@ -152,61 +152,69 @@
 
         // Function to start the file transfer
         async function startTransfer() {
-            const file = document.getElementById('fileInput').files[0];
-            if (!file) {
-                alert('Please select a file.');
-                return;
-            }
+        const file = document.getElementById('fileInput').files[0];
+        if (!file) {
+            alert('Please select a file.');
+            return;
+        }
 
-            if (selectedRegions.length === 0) {
-                alert('Please select at least one region.');
-                return;
-            }
+        // Get selected regions in order
+        const orderedRegions = [];
+        document.querySelectorAll('#regions li').forEach((li) => {
+            orderedRegions.push(li.innerText.split('. ')[1]); // Get the region name from the display text
+        });
 
-            // Convert the file to a Base64-encoded string
-            const reader = new FileReader();
-            reader.onloadend = async function() {
+        if (orderedRegions.length === 0) {
+            alert('Please select at least one region.');
+            return;
+        }
+
+        // Convert the file to a Base64-encoded string
+        const reader = new FileReader();
+        reader.onloadend = async function() {
+            try {
                 const base64File = reader.result.split(',')[1]; // Get only the Base64 part
 
                 // Create a JSON object to send the file and regions
                 const requestBody = {
                     fileName: file.name,
                     fileData: base64File,
-                    regions: selectedRegions
+                    regions: orderedRegions
                 };
 
-                try {
-                    // Make an HTTP POST request to your Azure Function
-                    const response = await fetch('https://cloud-chasers-function-app.azurewebsites.net/api/HttpTrigger1?code=287i66JKetVQdwEjj3hldlr1dN7j5vtjwkgw82pZgGxJAzFuoVW8gw%3D%3D', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(requestBody)
-                    });
+                // Make an HTTP POST request to your Azure Function
+                const response = await fetch('https://cloud-chasers-function-app.azurewebsites.net/api/HttpTrigger1?code=_XiazNVpJOCnCkPytVOfp5tEKiNvi4l3BzSqaS3eN9RSAzFuDqBKKQ%3D%3D', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
 
-                    const result = await response.json();
-                    if (response.ok) {
-                        // Display the result
-                        document.getElementById('result').innerHTML = `
-                            File transfer completed!<br>
-                            ${result.transferTimes.map(time => `${time.region}: ${time.timeTaken} seconds`).join('<br>')}
-                        `;
-                    } else {
-                        document.getElementById('result').innerHTML = `Error: ${result.message}`;
-                    }
-                } catch (error) {
-                    console.error('Error transferring file:', error);
-                    document.getElementById('result').innerHTML = `
-                        An error occurred during the transfer.<br>
-                        Error message: ${error.message || error}<br>
-                        Please check the console for more details.
-                    `;
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            };
 
-            reader.readAsDataURL(file); // Trigger the file reading process
-        }
+                const result = await response.json();
+
+                if (result && result.message) {
+                    // Display the result
+                    document.getElementById('result').innerHTML = result.message;
+                } else {
+                    throw new Error('Invalid response format from Azure Function');
+                }
+            } catch (error) {
+                console.error('Error transferring file:', error);
+                document.getElementById('result').innerHTML = `
+                    An error occurred during the transfer.<br>
+                    Error message: ${error.message || error}<br>
+                    Please check the console for more details.
+                `;
+            }
+        };
+
+        reader.readAsDataURL(file); // Trigger the file reading process
+    }
     </script>
 </body>
 </html>
