@@ -88,133 +88,126 @@
         <button onclick="startTransfer()">Start Transfer</button>
         
         <div id="result"></div>
-    </div>
 
-    <script>
-        // List of Azure regions with descriptions
-        const azureRegions = [
-            "East US - Virginia", "East US 2 - Virginia", "Central US - Iowa", 
-            "North Central US - Illinois", "South Central US - Texas", "West US - California",
-            "West US 2 - Washington", "West US 3 - Arizona", "Canada Central - Toronto, Ontario", 
-            "Canada East - Quebec City, Quebec", "Brazil South - Sao Paulo State", "Brazil Southeast - Rio de Janeiro", 
-            "North Europe - Ireland", "West Europe - Netherlands", "France Central - Paris", 
-            "France South - Marseille", "UK South - London", "UK West - Cardiff", 
-            "Germany North - Berlin", "Germany West Central - Frankfurt", "Norway East - Oslo", 
-            "Norway West - Stavanger", "Switzerland North - Zurich", "Switzerland West - Geneva", 
-            "UAE North - Dubai", "UAE Central - Abu Dhabi", "South Africa North - Johannesburg", 
-            "South Africa West - Cape Town", "Australia East - New South Wales", "Australia Southeast - Victoria", 
-            "Australia Central - Canberra", "Japan East - Tokyo", "Japan West - Osaka", 
-            "Korea Central - Seoul", "Korea South - Busan", "India Central - Pune", 
-            "India South - Chennai", "India West - Mumbai", "China East - Shanghai", "China North - Beijing"
-        ];
+        <script>
+            const azureRegions = [
+                "East US - Virginia", "East US 2 - Virginia", "Central US - Iowa", 
+                "North Central US - Illinois", "South Central US - Texas", "West US - California",
+                "West US 2 - Washington", "West US 3 - Arizona", "Canada Central - Toronto, Ontario", 
+                "Canada East - Quebec City, Quebec", "Brazil South - Sao Paulo State", "Brazil Southeast - Rio de Janeiro", 
+                "North Europe - Ireland", "West Europe - Netherlands", "France Central - Paris", 
+                "France South - Marseille", "UK South - London", "UK West - Cardiff", 
+                "Germany North - Berlin", "Germany West Central - Frankfurt", "Norway East - Oslo", 
+                "Norway West - Stavanger", "Switzerland North - Zurich", "Switzerland West - Geneva", 
+                "UAE North - Dubai", "UAE Central - Abu Dhabi", "South Africa North - Johannesburg", 
+                "South Africa West - Cape Town", "Australia East - New South Wales", "Australia Southeast - Victoria", 
+                "Australia Central - Canberra", "Japan East - Tokyo", "Japan West - Osaka", 
+                "Korea Central - Seoul", "Korea South - Busan", "India Central - Pune", 
+                "India South - Chennai", "India West - Mumbai", "China East - Shanghai", "China North - Beijing"
+            ];
 
-        const regionsDiv = document.getElementById('regions');
-        const selectedRegionsUl = document.getElementById('selectedRegions');
-        let selectedRegions = [];
+            const regionsDiv = document.getElementById('regions');
+            const selectedRegionsUl = document.getElementById('selectedRegions');
+            let selectedRegions = [];
 
-        // Dynamically display region buttons
-        azureRegions.forEach((region, index) => {
-            let button = document.createElement('button');
-            button.innerText = region;
-            button.setAttribute('id', `region-${index}`);
-            button.onclick = function() {
-                toggleRegion(region, button);
-            };
-            regionsDiv.appendChild(button);
-        });
+            // Dynamically display region buttons
+            azureRegions.forEach((region, index) => {
+                let button = document.createElement('button');
+                button.innerText = region;
+                button.setAttribute('id', `region-${index}`);
+                button.onclick = function() {
+                    toggleRegion(region, button);
+                };
+                regionsDiv.appendChild(button);
+            });
 
-        // Function to toggle region selection
-        function toggleRegion(region, button) {
-            const regionIndex = selectedRegions.indexOf(region);
-            if (regionIndex === -1) {
-                // Add region to the selected regions if not already selected
-                selectedRegions.push(region);
-                button.classList.add('deselected'); // Visually disable the button
-            } else {
-                // Remove region if it's already selected
-                selectedRegions.splice(regionIndex, 1);
-                button.classList.remove('deselected'); // Re-enable the button
+            // Function to toggle region selection
+            function toggleRegion(region, button) {
+                const regionIndex = selectedRegions.indexOf(region);
+                if (regionIndex === -1) {
+                    // Add region to the selected regions if not already selected
+                    selectedRegions.push(region);
+                    button.classList.add('deselected'); // Visually disable the button
+                } else {
+                    // Remove region if it's already selected
+                    selectedRegions.splice(regionIndex, 1);
+                    button.classList.remove('deselected'); // Re-enable the button
+                }
+
+                // Update the display
+                updateSelectedRegions();
             }
 
-            // Update the display
-            updateSelectedRegions();
-        }
+            // Function to update the selected regions display with order numbers
+            function updateSelectedRegions() {
+                selectedRegionsUl.innerHTML = ""; // Clear current list
+                selectedRegions.forEach((region, index) => {
+                    let li = document.createElement('li');
+                    li.innerText = `${index + 1}. ${region}`; // Display order number
+                    selectedRegionsUl.appendChild(li);
+                });
+            }
 
-        // Function to update the selected regions display with order numbers
-        function updateSelectedRegions() {
-            selectedRegionsUl.innerHTML = ""; // Clear current list
-            selectedRegions.forEach((region, index) => {
-                let li = document.createElement('li');
-                li.innerText = `${index + 1}. ${region}`; // Display order number
-                selectedRegionsUl.appendChild(li);
-            });
-        }
+            // Function to start the file transfer
+            async function startTransfer() {
+                const file = document.getElementById('fileInput').files[0];
+                if (!file) {
+                    alert('Please select a file.');
+                    return;
+                }
 
-        // Function to start the file transfer
-        async function startTransfer() {
-        const file = document.getElementById('fileInput').files[0];
-        if (!file) {
-            alert('Please select a file.');
-            return;
-        }
+                if (selectedRegions.length === 0) {
+                    alert('Please select at least one region.');
+                    return;
+                }
 
-        // Get selected regions in order
-        const orderedRegions = [];
-        document.querySelectorAll('#regions li').forEach((li) => {
-            orderedRegions.push(li.innerText.split('. ')[1]); // Get the region name from the display text
-        });
+                // Convert the file to a Base64-encoded string
+                const reader = new FileReader();
+                reader.onloadend = async function() {
+                    try {
+                        const base64File = reader.result.split(',')[1]; // Get only the Base64 part
 
-        if (orderedRegions.length === 0) {
-            alert('Please select at least one region.');
-            return;
-        }
+                        // Create a JSON object to send the file and regions
+                        const requestBody = {
+                            fileName: file.name,
+                            fileData: base64File,
+                            regions: selectedRegions
+                        };
 
-        // Convert the file to a Base64-encoded string
-        const reader = new FileReader();
-        reader.onloadend = async function() {
-            try {
-                const base64File = reader.result.split(',')[1]; // Get only the Base64 part
+                        // Make an HTTP POST request to your Azure Function
+                        const response = await fetch('https://cloud-chasers-function-app.azurewebsites.net/api/HttpTrigger1?code=_XiazNVpJOCnCkPytVOfp5tEKiNvi4l3BzSqaS3eN9RSAzFuDqBKKQ%3D%3D', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(requestBody)
+                        });
 
-                // Create a JSON object to send the file and regions
-                const requestBody = {
-                    fileName: file.name,
-                    fileData: base64File,
-                    regions: orderedRegions
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const result = await response.json();
+
+                        if (result && result.message) {
+                            // Display the result
+                            document.getElementById('result').innerHTML = result.message;
+                        } else {
+                            throw new Error('Invalid response format from Azure Function');
+                        }
+                    } catch (error) {
+                        console.error('Error transferring file:', error);
+                        document.getElementById('result').innerHTML = `
+                            An error occurred during the transfer.<br>
+                            Error message: ${error.message || error}<br>
+                            Please check the console for more details.
+                        `;
+                    }
                 };
 
-                // Make an HTTP POST request to your Azure Function
-                const response = await fetch('https://cloud-chasers-function-app.azurewebsites.net/api/HttpTrigger1?code=_XiazNVpJOCnCkPytVOfp5tEKiNvi4l3BzSqaS3eN9RSAzFuDqBKKQ%3D%3D', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-
-                if (result && result.message) {
-                    // Display the result
-                    document.getElementById('result').innerHTML = result.message;
-                } else {
-                    throw new Error('Invalid response format from Azure Function');
-                }
-            } catch (error) {
-                console.error('Error transferring file:', error);
-                document.getElementById('result').innerHTML = `
-                    An error occurred during the transfer.<br>
-                    Error message: ${error.message || error}<br>
-                    Please check the console for more details.
-                `;
+                reader.readAsDataURL(file); // Trigger the file reading process
             }
-        };
-
-        reader.readAsDataURL(file); // Trigger the file reading process
-    }
-    </script>
+        </script>
+    </div>
 </body>
 </html>
