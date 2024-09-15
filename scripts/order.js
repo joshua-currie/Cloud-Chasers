@@ -78,7 +78,6 @@ function prepForLaunch() {
 
 // Function to start the file transfer
 async function startTransfer() {
-    // Use the file data from localStorage
     const { name, contents } = createdFileData;
 
     // Convert the file contents to a Base64-encoded string
@@ -104,8 +103,9 @@ async function startTransfer() {
 
             if (response.ok) {
                 const result = await response.json();
+
+                // Make sure result is correctly stored in localStorage
                 localStorage.setItem('transferResult', JSON.stringify(result));
-                localStorage.setItem('createdFile', reader.result); // Store the file in localStorage
 
                 // Change button to "View Results"
                 startTransferBtn.innerText = 'View Results';
@@ -124,7 +124,6 @@ async function startTransfer() {
                 Please check the console for more details.
             `;
 
-            // Re-enable the button if there's an error
             startTransferBtn.disabled = false;
             startTransferBtn.innerText = 'Start Transfer';
         }
@@ -132,3 +131,4 @@ async function startTransfer() {
 
     reader.readAsDataURL(blob); // Read the file as Base64 for the transfer
 }
+

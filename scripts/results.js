@@ -1,10 +1,9 @@
 // Retrieve result data from local storage
 const resultDiv = document.getElementById('result');
 const result = JSON.parse(localStorage.getItem('transferResult'));
-const fileData = localStorage.getItem('createdFile');
-const createdFileData = JSON.parse(localStorage.getItem('createdFile')); // Get file name
 
 if (result && result.message) {
+    // Ensure the result message is properly displayed
     resultDiv.innerHTML = result.message;
 } else {
     resultDiv.innerHTML = "No transfer data found.";
@@ -12,6 +11,9 @@ if (result && result.message) {
 
 // Function to download the file from local storage
 function downloadFile() {
+    const fileData = localStorage.getItem('createdFile');
+    const createdFileData = JSON.parse(localStorage.getItem('createdFile')); // Get file name
+
     if (!fileData || !createdFileData) {
         alert('No file available for download.');
         return;
