@@ -69,13 +69,17 @@ function prepForLaunch() {
     document.getElementById('modalOverlay').style.visibility = 'visible';
 }
 
-// Function to start the file transfer and handle closing the modal
+// Function to start the file transfer
 async function startTransfer() {
     const file = document.getElementById('fileInput').files[0];
     if (!file) {
         alert('Please select a file.');
         return;
     }
+
+    // Disable the "Start Transfer" button to prevent multiple clicks
+    startTransferBtn.disabled = true;
+    startTransferBtn.innerText = 'Transferring...';
 
     // Convert the file to a Base64-encoded string
     const reader = new FileReader();
@@ -108,8 +112,10 @@ async function startTransfer() {
             if (result && result.message) {
                 // Store result in local storage
                 localStorage.setItem('transferResult', JSON.stringify(result));
-                // Change the button to view results
+
+                // Change the button to "View Results"
                 startTransferBtn.innerText = 'View Results';
+                startTransferBtn.disabled = false;
                 startTransferBtn.onclick = function() {
                     window.location.href = '../pages/results.html';
                 };
@@ -123,13 +129,14 @@ async function startTransfer() {
                 Error message: ${error.message || error}<br>
                 Please check the console for more details.
             `;
+
+            // Re-enable the button if there's an error
+            startTransferBtn.disabled = false;
+            startTransferBtn.innerText = 'Start Transfer';
         }
     };
 
     reader.readAsDataURL(file); // Trigger the file reading process
-
-    // Hide the modal after the transfer starts
-    document.getElementById('modalOverlay').style.visibility = 'hidden';
 }
 
 // Optional: Function to close the modal if you want to add a close button
