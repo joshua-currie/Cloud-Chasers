@@ -1,0 +1,55 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+.container {
+    max-width: 800px;
+    margin: auto;
+}
+h1 {
+    text-align: center;
+}
+.file-upload {
+    margin-bottom: 20px;
+}
+.region-list, .selected-list {
+    margin-top: 20px;
+}
+.region-buttons {
+    display: flex;
+    flex-wrap: wrap;
+}
+.region-buttons button {
+    margin: 5px;
+    padding: 10px;
+    background-color: #0078D4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.region-buttons button.deselected {
+    background-color: #ccc;
+    color: #666;
+}
+.region-buttons button:hover {
+    background-color: #005A9E;
+}
+.selected-regions {
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+.selected-regions h2 {
+    margin-top: 0;
+}
+.selected-regions ul {
+    list-style-type: none;
+    padding: 0;
+}
+.selected-regions li {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+}

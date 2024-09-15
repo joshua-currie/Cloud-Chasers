@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure File Transfer Game</title>
+    <link rel="stylesheet" href="../styles/order.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Azure File Transfer Challenge</h1>
+        <div class="file-upload">
+            <input type="file" id="fileInput">
+        </div>
+        
+        <div class="region-list">
+            <h2>Select Azure Regions</h2>
+            <div class="region-buttons" id="regions">
+                <!-- Region buttons will be dynamically added here -->
+            </div>
+        </div>
+        
+        <div class="selected-list">
+            <div class="selected-regions">
+                <h2>Selected Regions (In Order)</h2>
+                <ul id="selectedRegions">
+                    <!-- Selected regions will be displayed here -->
+                </ul>
+            </div>
+        </div>
+
+        <button onclick="startTransfer()">Start Transfer</button>
+        
+        <div id="result"></div>
+
+        <script src="../scripts/order.js"></script>
+    </div>
+</body>
+</html>
