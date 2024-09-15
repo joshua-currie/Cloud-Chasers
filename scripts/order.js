@@ -142,7 +142,7 @@ async function startTransfer() {
 
             // After transfer is done, show the "View Results" button and new message
             const viewResultsButton = document.getElementById('launchTransferBtn');
-            const resultText = document.createElement('p'); // Create result text
+            const resultText = document.createElement('h6'); // Create result text
             resultText.id = 'resultText';
             resultText.innerText = "Let's see how you did!";
             resultText.style.fontSize = '40px';
