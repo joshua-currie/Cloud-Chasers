@@ -100,7 +100,7 @@ async function startTransfer() {
     // Disable the Launch button and hide the "Ready whenever you are!" text
     const launchButton = document.getElementById('launchTransferBtn');
     const launchText = document.getElementById('launchTransferText');
-    const transferText = document.createElement('p'); // Create transfer text
+    const transferText = document.createElement('h6'); // Create transfer text
     transferText.id = 'transferProgressText';
     transferText.innerText = 'Transfer in progress...';
     transferText.style.color = 'red';
@@ -146,7 +146,7 @@ async function startTransfer() {
             resultText.id = 'resultText';
             resultText.innerText = "Let's see how you did!";
             resultText.style.fontSize = '40px';
-            resultText.style.color = 'green';
+            resultText.style.color = 'black';
             resultText.style.position = 'absolute';
             resultText.style.left = '50%';
             resultText.style.top = '15%';
@@ -155,6 +155,7 @@ async function startTransfer() {
             // Modify button and text for viewing results
             viewResultsButton.innerText = 'View Results';
             viewResultsButton.classList.remove('hidden'); // Show the button
+            viewResultsButton.background = '#0078D4';
             viewResultsButton.onclick = function() {
                 window.location.href = '../pages/results.html';
             };
