@@ -20,7 +20,8 @@ function createFile() {
     }
 
     // Store the file in localStorage to pass it to the order.html page
-    localStorage.setItem('createdFile', JSON.stringify({ name: `${fileName}.txt`, contents: fileContents }));
+    localStorage.setItem('fileName', `${fileName}.txt`); // Store file name
+    localStorage.setItem('fileContent', fileContents); // Store file contents
 
     // Redirect to the order page after file creation
     window.location.href = '../pages/order.html';
