@@ -102,12 +102,12 @@ async function startTransfer() {
     const launchText = document.getElementById('launchTransferText');
     const transferText = document.createElement('h6'); // Create transfer text
     transferText.id = 'transferProgressText';
-    transferText.innerText = 'Transfer in progress...';
+    transferText.innerText = 'TRANSFER IN PROGRESS';
     transferText.style.color = 'red';
     transferText.style.fontSize = '40px';
     transferText.style.position = 'absolute';
     transferText.style.left = '50%';
-    transferText.style.top = '50%';
+    transferText.style.top = '25%';
     transferText.style.transform = 'translate(-50%, -50%)';
     
     if (launchButton) {
@@ -155,7 +155,7 @@ async function startTransfer() {
             // Modify button and text for viewing results
             viewResultsButton.innerText = 'View Results';
             viewResultsButton.classList.remove('hidden'); // Show the button
-            viewResultsButton.background = '#0078D4';
+            viewResultsButton.style.background = '#0078D4';
             viewResultsButton.onclick = function() {
                 window.location.href = '../pages/results.html';
             };
