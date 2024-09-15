@@ -97,12 +97,28 @@ async function startTransfer() {
         regions: selectedRegions
     };
 
-    // Disable the Launch button during the transfer
+    // Disable the Launch button and hide the "Ready whenever you are!" text
     const launchButton = document.getElementById('launchTransferBtn');
+    const launchText = document.getElementById('launchTransferText');
+    const transferText = document.createElement('p'); // Create transfer text
+    transferText.id = 'transferProgressText';
+    transferText.innerText = 'Transfer in progress...';
+    transferText.style.color = 'red';
+    transferText.style.fontSize = '40px';
+    transferText.style.position = 'absolute';
+    transferText.style.left = '50%';
+    transferText.style.top = '50%';
+    transferText.style.transform = 'translate(-50%, -50%)';
+    
     if (launchButton) {
-        launchButton.disabled = true;
-        launchButton.innerText = 'Launching...';
+        launchButton.classList.add('hidden'); // Hide the button
     }
+    if (launchText) {
+        launchText.classList.add('hidden'); // Hide the "Ready" text
+    }
+
+    // Add the "Transfer in progress" text to the modal
+    document.querySelector('.modal').appendChild(transferText);
 
     try {
         // Make an HTTP POST request to your Azure Function
@@ -123,14 +139,29 @@ async function startTransfer() {
         if (result && result.message) {
             // Store result in local storage
             localStorage.setItem('transferResult', JSON.stringify(result));
-            // Change the button to view results
-            if (launchButton) {
-                launchButton.innerText = 'View Results';
-                launchButton.disabled = false;
-                launchButton.onclick = function() {
-                    window.location.href = '../pages/results.html';
-                };
-            }
+
+            // After transfer is done, show the "View Results" button and new message
+            const viewResultsButton = document.getElementById('launchTransferBtn');
+            const resultText = document.createElement('p'); // Create result text
+            resultText.id = 'resultText';
+            resultText.innerText = "Let's see how you did!";
+            resultText.style.fontSize = '40px';
+            resultText.style.color = 'green';
+            resultText.style.position = 'absolute';
+            resultText.style.left = '50%';
+            resultText.style.top = '15%';
+            resultText.style.transform = 'translate(-50%, -50%)';
+
+            // Modify button and text for viewing results
+            viewResultsButton.innerText = 'View Results';
+            viewResultsButton.classList.remove('hidden'); // Show the button
+            viewResultsButton.onclick = function() {
+                window.location.href = '../pages/results.html';
+            };
+
+            // Replace "Transfer in progress" with result text
+            document.getElementById('transferProgressText').remove(); // Remove progress text
+            document.querySelector('.modal').appendChild(resultText); // Add result text
         } else {
             throw new Error('Invalid response format from Azure Function');
         }
@@ -140,6 +171,7 @@ async function startTransfer() {
         if (launchButton) {
             launchButton.disabled = false;
             launchButton.innerText = 'Launch';
+            launchButton.classList.remove('hidden'); // Show the button again in case of error
         }
 
         document.getElementById('result').innerHTML = `
@@ -149,6 +181,7 @@ async function startTransfer() {
         `;
     }
 }
+
 
 
 
@@ -187,6 +220,7 @@ function playAnimations() {
             animationLabel.innerText = "";
             animationContainer.innerHTML = ''; // Clear the animation container
             document.getElementById('launchTransferBtn').classList.remove('hidden');
+            document.getElementById('launchTransferText').classList.remove('hidden');
             return;
         }
 
