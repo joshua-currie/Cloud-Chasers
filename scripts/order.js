@@ -78,81 +78,78 @@ function prepForLaunch() {
 
 // Function to start the file transfer
 async function startTransfer() {
-    const file = document.getElementById('fileInput').files[0];
-    if (!file) {
-        alert('Please select a file.');
+    // You can replace the file input logic with the dynamically created file data
+    const fileName = localStorage.getItem('fileName'); // Get the file name from localStorage
+    const fileContent = localStorage.getItem('fileContent'); // Get the file content from localStorage
+
+    if (!fileName || !fileContent) {
+        alert('Please create a file before starting the transfer.');
         return;
     }
 
-    // Convert the file to a Base64-encoded string
-    const reader = new FileReader();
-    reader.onloadend = async function() {
-        try {
-            const base64File = reader.result.split(',')[1]; // Get only the Base64 part
+    // Convert the file content to Base64
+    const base64File = btoa(fileContent); // Encoding file content to Base64
 
-            // Create a JSON object to send the file and regions
-            const requestBody = {
-                fileName: file.name,
-                fileData: base64File,
-                regions: selectedRegions
-            };
-
-            // Disable the Launch button during the transfer
-            const launchButton = document.getElementById('launchTransferBtn');
-            if (launchButton) { // Ensure the button exists
-                launchButton.disabled = true;
-                launchButton.innerText = 'Launching...'; // Ensure the button exists before modifying it
-            }
-
-            // Make an HTTP POST request to your Azure Function
-            const response = await fetch('https://cloud-chasers-function-app.azurewebsites.net/api/HttpTrigger1?code=287i66JKetVQdwEjj3hldlr1dN7j5vtjwkgw82pZgGxJAzFuoVW8gw%3D%3D', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestBody)
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-
-            if (result && result.message) {
-                // Store result in local storage
-                localStorage.setItem('transferResult', JSON.stringify(result));
-                // Change the button to view results
-                if (launchButton) {
-                    launchButton.innerText = 'View Results';
-                    launchButton.disabled = false;
-                    launchButton.onclick = function() {
-                        window.location.href = '../pages/results.html';
-                    };
-                }
-            } else {
-                throw new Error('Invalid response format from Azure Function');
-            }
-        } catch (error) {
-            console.error('Error during transfer:', error);
-
-            // Make sure the launch button is available before modifying it
-            const launchButton = document.getElementById('launchTransferBtn');
-            if (launchButton) {
-                launchButton.disabled = false;
-                launchButton.innerText = 'Launch';
-            }
-
-            document.getElementById('result').innerHTML = `
-                An error occurred during the transfer.<br>
-                Error message: ${error.message || error}<br>
-                Please check the console for more details.
-            `;
-        }
+    // Create a JSON object to send the file and regions
+    const requestBody = {
+        fileName: fileName,
+        fileData: base64File,
+        regions: selectedRegions
     };
 
-    reader.readAsDataURL(file); // Trigger the file reading process
+    // Disable the Launch button during the transfer
+    const launchButton = document.getElementById('launchTransferBtn');
+    if (launchButton) {
+        launchButton.disabled = true;
+        launchButton.innerText = 'Launching...';
+    }
+
+    try {
+        // Make an HTTP POST request to your Azure Function
+        const response = await fetch('https://cloud-chasers-function-app.azurewebsites.net/api/HttpTrigger1?code=287i66JKetVQdwEjj3hldlr1dN7j5vtjwkgw82pZgGxJAzFuoVW8gw%3D%3D', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result && result.message) {
+            // Store result in local storage
+            localStorage.setItem('transferResult', JSON.stringify(result));
+            // Change the button to view results
+            if (launchButton) {
+                launchButton.innerText = 'View Results';
+                launchButton.disabled = false;
+                launchButton.onclick = function() {
+                    window.location.href = '../pages/results.html';
+                };
+            }
+        } else {
+            throw new Error('Invalid response format from Azure Function');
+        }
+    } catch (error) {
+        console.error('Error during transfer:', error);
+
+        if (launchButton) {
+            launchButton.disabled = false;
+            launchButton.innerText = 'Launch';
+        }
+
+        document.getElementById('result').innerHTML = `
+            An error occurred during the transfer.<br>
+            Error message: ${error.message || error}<br>
+            Please check the console for more details.
+        `;
+    }
 }
+
 
 
 // Animation steps
