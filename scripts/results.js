@@ -1,9 +1,10 @@
 // Retrieve result data from local storage
 const resultDiv = document.getElementById('result');
 const result = JSON.parse(localStorage.getItem('transferResult'));
+const createdFileData = JSON.parse(localStorage.getItem('createdFile')); // Retrieve file details from localStorage
 
 if (result && result.message) {
-    // Ensure the result message is properly displayed
+    // Display the transfer result
     resultDiv.innerHTML = result.message;
 } else {
     resultDiv.innerHTML = "No transfer data found.";
@@ -11,18 +12,28 @@ if (result && result.message) {
 
 // Function to download the file from local storage
 function downloadFile() {
-    const fileData = localStorage.getItem('createdFile');
-    const createdFileData = JSON.parse(localStorage.getItem('createdFile')); // Get file name
+    const fileContents = createdFileData.contents;
+    const fileName = createdFileData.name;
 
-    if (!fileData || !createdFileData) {
+    if (!fileContents || !fileName) {
         alert('No file available for download.');
         return;
     }
 
+    // Create a Blob from the file contents
+    const blob = new Blob([fileContents], { type: 'text/plain' });
+
+    // Create an object URL for the blob
+    const url = URL.createObjectURL(blob);
+
+    // Create an anchor element and trigger a download
     const a = document.createElement('a');
-    a.href = fileData;
-    a.download = createdFileData.name || 'download.txt'; // Use the stored file name
+    a.href = url;
+    a.download = fileName; // Use the stored file name
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+
+    // Release the object URL after the download
+    URL.revokeObjectURL(url);
 }
