@@ -154,12 +154,19 @@ async function startTransfer() {
 
             // Modify button and text for viewing results
             viewResultsButton.innerText = 'View Results';
-            viewResultsButton.classList.remove('hidden'); // Show the button
+            viewResultsButton.classList.remove('hidden');
             viewResultsButton.style.background = '#0078D4';
+            viewResultsButton.style.boxShadow = 'none';
+            viewResultsButton.onmouseover = function() {
+                viewResultsButton.style.backgroundColor = '#005A9E'; // Change color on hover
+            };
+            viewResultsButton.onmouseout = function() {
+                viewResultsButton.style.backgroundColor = '#0078D4'; // Revert back to original color
+            };
             viewResultsButton.onclick = function() {
                 window.location.href = '../pages/results.html';
             };
-
+            
             // Replace "Transfer in progress" with result text
             document.getElementById('transferProgressText').remove(); // Remove progress text
             document.querySelector('.modal').appendChild(resultText); // Add result text
