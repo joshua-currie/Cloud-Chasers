@@ -132,3 +132,64 @@ async function startTransfer() {
     reader.readAsDataURL(blob); // Read the file as Base64 for the transfer
 }
 
+// Animation steps
+const animations = [
+    { label: 'Preparing route...', url: '../animations/map-animation.json' },
+    { label: 'Creating file...', url: '../animations/file-animation.json' },
+    { label: 'Integrating timer...', url: '../animations/timer-animation.json' }
+];
+
+// Function to show the modal and start animations
+function prepForLaunch() {
+    if (selectedRegions.length === 0) {
+        alert('Please select at least one region.');
+        return;
+    }
+
+    // Show the modal by setting its visibility to visible
+    document.getElementById('modalOverlay').style.visibility = 'visible';
+
+    // Start playing the animations in sequence
+    playAnimations();
+}
+
+// Function to play Lottie animations in sequence
+function playAnimations() {
+    const animationLabel = document.getElementById('animationLabel');
+    const animationContainer = document.getElementById('animationContainer');
+    
+    let currentAnimation = 0;
+
+    // Function to play a single animation and move to the next one
+    function playNextAnimation() {
+        if (currentAnimation >= animations.length) {
+            // After all animations, show the ready text and launch button
+            animationLabel.innerText = "Ready whenever you are";
+            animationContainer.innerHTML = ''; // Clear the animation container
+            document.getElementById('launchTransferBtn').classList.remove('hidden');
+            return;
+        }
+
+        // Set the label for the current animation
+        animationLabel.innerText = animations[currentAnimation].label;
+
+        // Clear the previous animation
+        animationContainer.innerHTML = '';
+
+        // Load the current animation in the container
+        lottie.loadAnimation({
+            container: animationContainer,
+            renderer: 'svg',
+            loop: false,
+            autoplay: true,
+            path: animations[currentAnimation].url
+        }).addEventListener('complete', function() {
+            // Move to the next animation after the current one completes
+            currentAnimation++;
+            playNextAnimation();
+        });
+    }
+
+    // Start the first animation
+    playNextAnimation();
+}

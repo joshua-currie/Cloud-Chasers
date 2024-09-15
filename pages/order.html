@@ -29,15 +29,19 @@
         <button onclick="prepForLaunch()">Prep for Launch</button>
         
         <!-- Modal for Start Transfer -->
+        <!-- Modal for animations -->
         <div class="overlay" id="modalOverlay">
             <div class="modal">
-                <p>Ready to start the transfer?</p>
-                <button id="startTransferBtn" onclick="startTransfer()">Start Transfer</button>
+                <p id="animationLabel">Preparing route...</p> <!-- Label for animation -->
+                <div id="animationContainer"></div> <!-- Container for Lottie animations -->
+                <button id="launchTransferBtn" class="hidden" onclick="startTransfer()">Launch</button> <!-- Hidden by default -->
             </div>
         </div>
 
+
         <div id="result"></div>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
         <script src="../scripts/order.js"></script>
     </div>
 </body>
