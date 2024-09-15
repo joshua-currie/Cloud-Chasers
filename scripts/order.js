@@ -105,13 +105,28 @@ async function startTransfer() {
             if (response.ok) {
                 const result = await response.json();
                 localStorage.setItem('transferResult', JSON.stringify(result));
+                localStorage.setItem('createdFile', reader.result); // Store the file in localStorage
 
-                window.location.href = '../pages/results.html';
+                // Change button to "View Results"
+                startTransferBtn.innerText = 'View Results';
+                startTransferBtn.disabled = false;
+                startTransferBtn.onclick = function() {
+                    window.location.href = '../pages/results.html';
+                };
             } else {
                 throw new Error('File transfer failed.');
             }
         } catch (error) {
             console.error('Error during transfer:', error);
+            document.getElementById('result').innerHTML = `
+                An error occurred during the transfer.<br>
+                Error message: ${error.message || error}<br>
+                Please check the console for more details.
+            `;
+
+            // Re-enable the button if there's an error
+            startTransferBtn.disabled = false;
+            startTransferBtn.innerText = 'Start Transfer';
         }
     };
 
