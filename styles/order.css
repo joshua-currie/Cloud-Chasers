@@ -53,3 +53,51 @@ h1 {
     margin-bottom: 5px;
     border-radius: 5px;
 }
+button {
+    padding: 10px;
+    margin-top: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Overlay styles */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark background with opacity */
+    display: flex;
+    align-items: center; /* Center the modal vertically */
+    justify-content: center; /* Center the modal horizontally */
+    visibility: hidden; /* Hidden by default */
+}
+
+/* Modal styles */
+.modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Button inside the modal */
+.modal button {
+    padding: 10px 20px;
+    background-color: #0078D4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.modal button:hover {
+    background-color: #005A9E;
+}

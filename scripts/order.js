@@ -17,6 +17,7 @@ const azureRegions = [
 
 const regionsDiv = document.getElementById('regions');
 const selectedRegionsUl = document.getElementById('selectedRegions');
+const startTransferBtn = document.getElementById('startTransferBtn');
 let selectedRegions = [];
 
 // Dynamically display region buttons
@@ -57,16 +58,22 @@ function updateSelectedRegions() {
     });
 }
 
-// Function to start the file transfer
+// Function to show the modal (pop-up window)
+function prepForLaunch() {
+    if (selectedRegions.length === 0) {
+        alert('Please select at least one region.');
+        return;
+    }
+
+    // Show the modal by setting its visibility to visible
+    document.getElementById('modalOverlay').style.visibility = 'visible';
+}
+
+// Function to start the file transfer and handle closing the modal
 async function startTransfer() {
     const file = document.getElementById('fileInput').files[0];
     if (!file) {
         alert('Please select a file.');
-        return;
-    }
-
-    if (selectedRegions.length === 0) {
-        alert('Please select at least one region.');
         return;
     }
 
@@ -99,8 +106,13 @@ async function startTransfer() {
             const result = await response.json();
 
             if (result && result.message) {
-                // Display the result
-                document.getElementById('result').innerHTML = result.message;
+                // Store result in local storage
+                localStorage.setItem('transferResult', JSON.stringify(result));
+                // Change the button to view results
+                startTransferBtn.innerText = 'View Results';
+                startTransferBtn.onclick = function() {
+                    window.location.href = '../pages/results.html';
+                };
             } else {
                 throw new Error('Invalid response format from Azure Function');
             }
@@ -115,4 +127,12 @@ async function startTransfer() {
     };
 
     reader.readAsDataURL(file); // Trigger the file reading process
+
+    // Hide the modal after the transfer starts
+    document.getElementById('modalOverlay').style.visibility = 'hidden';
+}
+
+// Optional: Function to close the modal if you want to add a close button
+function closeModal() {
+    document.getElementById('modalOverlay').style.visibility = 'hidden';
 }

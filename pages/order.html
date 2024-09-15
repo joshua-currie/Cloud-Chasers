@@ -29,9 +29,23 @@
             </div>
         </div>
 
-        <button onclick="startTransfer()">Start Transfer</button>
+        <button id="prepLaunchBtn" onclick="prepForLaunch()">Prep for Launch</button>
         
-        <div id="result"></div>
+        <!-- Hidden div for the start transfer step
+        <div id="transferDiv" class="hidden">
+            <button id="startTransferBtn" onclick="startTransfer()">Start Transfer</button>
+        </div>
+        
+        <div id="result"></div> -->
+
+        <!-- Overlay for modal -->
+        <div class="overlay" id="modalOverlay">
+            <div class="modal">
+                <p>Ready to start the transfer?</p>
+                <button id="startTransferBtn" onclick="startTransfer()">Start Transfer</button>
+            </div>
+        </div>
+
 
         <script src="../scripts/order.js"></script>
     </div>
