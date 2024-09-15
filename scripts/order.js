@@ -20,6 +20,13 @@ const selectedRegionsUl = document.getElementById('selectedRegions');
 const startTransferBtn = document.getElementById('startTransferBtn');
 let selectedRegions = [];
 
+// Load file data from localStorage (from file.html)
+let createdFileData = JSON.parse(localStorage.getItem('createdFile'));
+if (!createdFileData) {
+    alert("No file data found. Please create a file first.");
+    window.location.href = '../pages/file.html'; // Redirect if no file is found
+}
+
 // Dynamically display region buttons
 azureRegions.forEach((region, index) => {
     let button = document.createElement('button');
@@ -71,30 +78,22 @@ function prepForLaunch() {
 
 // Function to start the file transfer
 async function startTransfer() {
-    const file = document.getElementById('fileInput').files[0];
-    if (!file) {
-        alert('Please select a file.');
-        return;
-    }
+    // Use the file data from localStorage
+    const { name, contents } = createdFileData;
 
-    // Disable the "Start Transfer" button to prevent multiple clicks
-    startTransferBtn.disabled = true;
-    startTransferBtn.innerText = 'Transferring...';
-
-    // Convert the file to a Base64-encoded string
+    // Convert the file contents to a Base64-encoded string
+    const blob = new Blob([contents], { type: 'text/plain' });
     const reader = new FileReader();
     reader.onloadend = async function() {
+        const base64File = reader.result.split(',')[1]; // Get only the Base64 part
+
+        const requestBody = {
+            fileName: name,
+            fileData: base64File,
+            regions: selectedRegions
+        };
+
         try {
-            const base64File = reader.result.split(',')[1]; // Get only the Base64 part
-
-            // Create a JSON object to send the file and regions
-            const requestBody = {
-                fileName: file.name,
-                fileData: base64File,
-                regions: selectedRegions
-            };
-
-            // Make an HTTP POST request to your Azure Function
             const response = await fetch('https://cloud-chasers-function-app.azurewebsites.net/api/HttpTrigger1?code=287i66JKetVQdwEjj3hldlr1dN7j5vtjwkgw82pZgGxJAzFuoVW8gw%3D%3D', {
                 method: 'POST',
                 headers: {
@@ -103,43 +102,18 @@ async function startTransfer() {
                 body: JSON.stringify(requestBody)
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-
-            if (result && result.message) {
-                // Store result in local storage
+            if (response.ok) {
+                const result = await response.json();
                 localStorage.setItem('transferResult', JSON.stringify(result));
 
-                // Change the button to "View Results"
-                startTransferBtn.innerText = 'View Results';
-                startTransferBtn.disabled = false;
-                startTransferBtn.onclick = function() {
-                    window.location.href = '../pages/results.html';
-                };
+                window.location.href = '../pages/results.html';
             } else {
-                throw new Error('Invalid response format from Azure Function');
+                throw new Error('File transfer failed.');
             }
         } catch (error) {
-            console.error('Error transferring file:', error);
-            document.getElementById('result').innerHTML = `
-                An error occurred during the transfer.<br>
-                Error message: ${error.message || error}<br>
-                Please check the console for more details.
-            `;
-
-            // Re-enable the button if there's an error
-            startTransferBtn.disabled = false;
-            startTransferBtn.innerText = 'Start Transfer';
+            console.error('Error during transfer:', error);
         }
     };
 
-    reader.readAsDataURL(file); // Trigger the file reading process
-}
-
-// Optional: Function to close the modal if you want to add a close button
-function closeModal() {
-    document.getElementById('modalOverlay').style.visibility = 'hidden';
+    reader.readAsDataURL(blob); // Read the file as Base64 for the transfer
 }

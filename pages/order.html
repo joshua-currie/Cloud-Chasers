@@ -9,17 +9,14 @@
 <body>
     <div class="container">
         <h1>Azure File Transfer Challenge</h1>
-        <div class="file-upload">
-            <input type="file" id="fileInput">
-        </div>
-        
+
         <div class="region-list">
             <h2>Select Azure Regions</h2>
             <div class="region-buttons" id="regions">
                 <!-- Region buttons will be dynamically added here -->
             </div>
         </div>
-        
+
         <div class="selected-list">
             <div class="selected-regions">
                 <h2>Selected Regions (In Order)</h2>
@@ -29,16 +26,9 @@
             </div>
         </div>
 
-        <button id="prepLaunchBtn" onclick="prepForLaunch()">Prep for Launch</button>
+        <button onclick="prepForLaunch()">Prep for Launch</button>
         
-        <!-- Hidden div for the start transfer step
-        <div id="transferDiv" class="hidden">
-            <button id="startTransferBtn" onclick="startTransfer()">Start Transfer</button>
-        </div>
-        
-        <div id="result"></div> -->
-
-        <!-- Overlay for modal -->
+        <!-- Modal for Start Transfer -->
         <div class="overlay" id="modalOverlay">
             <div class="modal">
                 <p>Ready to start the transfer?</p>
@@ -46,6 +36,7 @@
             </div>
         </div>
 
+        <div id="result"></div>
 
         <script src="../scripts/order.js"></script>
     </div>
