@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create and Transfer File</title>
+    <link rel="stylesheet" href="../styles/file.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Create and Transfer File</h1>
+
+        <div class="file-input">
+            <label for="fileName">File Name (without extension):</label>
+            <input type="text" id="fileName" placeholder="Enter file name">
+
+            <label for="fileContents">File Contents (Max 1KB):</label>
+            <textarea id="fileContents" placeholder="Enter file contents here..."></textarea>
+
+            <button onclick="createFile()">Create File and Prepare for Transfer</button>
+        </div>
+
+        <div id="fileInfo"></div>
+
+        <button id="startTransferBtn" class="hidden" onclick="startTransfer()">Start Transfer</button>
+
+        <script src="../scripts/file.js"></script>
+    </div>
+</body>
+</html>
