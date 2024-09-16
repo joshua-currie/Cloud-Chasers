@@ -4,21 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Azure File Transfer Challenge</title>
+    <link rel="stylesheet" href="styles/style.css">
 </head>
 <body>
-    <video class="video-bg" autoplay muted loop id="backgroundVideoMain"></video>
+    <!-- Video Background -->
+    <video class="video-bg" autoplay muted loop id="backgroundVideoMain">
         <source src="assets/cloudvid2.mp4" type="video/mp4">
         Your browser does not support the video tag.
-      </video>
+    </video>
 
+    <!-- Main Content -->
     <div class="container">
         <h1>Welcome to the Azure File Transfer Challenge</h1>
         <button onclick="window.location.href='pages/file.html'">Create and Transfer a File</button>
     </div>
 
+    <!-- Script to Control Video Playback Speed -->
     <script>
         var video = document.getElementById("backgroundVideoMain");
-        video.playbackRate = 3;
+        video.playbackRate = 3; // Increase playback speed
     </script>
 </body>
 </html>
