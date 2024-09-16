@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="../styles/results.css">
 </head>
 <body>
+    <video class="video-bg" autoplay muted loop id="backgroundVideoResult"></video>
+        <source src="../assets/cloudvid2.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+
     <div class="container">
         <h1>File Transfer Results</h1>
         <div id="result"></div>
@@ -14,6 +19,11 @@
         <button onclick="downloadFile()">Download Your File</button>
 
         <button onclick="window.location.href='../pages/file.html'">Create Another File</button>
+
+        <script>
+            var video = document.getElementById("backgroundVideoResult");
+            video.playbackRate = 3;
+        </script>
 
         <script src="../scripts/results.js"></script>
     </div>

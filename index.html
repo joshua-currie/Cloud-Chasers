@@ -6,9 +6,19 @@
     <title>Azure File Transfer Challenge</title>
 </head>
 <body>
+    <video class="video-bg" autoplay muted loop id="backgroundVideoMain"></video>
+        <source src="assets/cloudvid2.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+
     <div class="container">
         <h1>Welcome to the Azure File Transfer Challenge</h1>
         <button onclick="window.location.href='pages/file.html'">Create and Transfer a File</button>
     </div>
+
+    <script>
+        var video = document.getElementById("backgroundVideoMain");
+        video.playbackRate = 3;
+    </script>
 </body>
 </html>
